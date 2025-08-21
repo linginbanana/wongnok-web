@@ -1,5 +1,6 @@
 // recipe service
-import axios from "axios"
+import { api } from "@/lib/axios"
+//import axios from "axios"
 
 type User = {
   id: string
@@ -24,9 +25,11 @@ type Recipe = {
 }
 
 export const fetchRecipes = async () => {
-  const recipesFetch = await axios.get<Recipe[]>('http://localhost:5000/recipes')
-  return recipesFetch
+ 
+    const recipesFetch = await api.get<{results: Recipe[]}>(
+      '/api/v1/food-recipes?page=1&limit=10'
+    )
 
-
-  
+    console.log('res => ',recipesFetch)
+  return recipesFetch.data.results
 }
