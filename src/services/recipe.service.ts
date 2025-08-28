@@ -28,7 +28,17 @@ export type Recipe = {
   user: User
 }
 
-type RecipeDetails = {
+export type RecipePayload = {
+  name: string
+  description: string
+  ingredient: string
+  instruction: string
+  imageURL: string
+  cookingDurationID: number
+  difficultyID: number
+}
+
+export type RecipeDetails = {
   id: number
   name: string
   description: string
@@ -62,15 +72,9 @@ export const fetchRecipeDetails = async () => {
   return recipeDetails
 }
 
-export const createRecipe = async (data: RecipeForm) => {
+export const createRecipe = async (data: RecipePayload) => {
   const recipeDetails = await api.post<RecipeForm>('/api/v1/food-recipes', {
-    name: data.name,
-    description: data.description,
-    ingredient: data.ingredient,
-    instruction: data.instruction,
-    imageURL: data.imageURL ?? '',
-    difficultyID: Number(data.difficulty),
-    cookingDurationID: Number(data.duration),
+    ...data,
   })
   return recipeDetails
 }
