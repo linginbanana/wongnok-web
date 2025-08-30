@@ -1,18 +1,11 @@
-'use client'
+// my-recipe
 import CardRecipe from '@/components/CardRecipe'
 import { Button } from '@/components/ui/button'
 import { fetchRecipesByUser } from '@/services/recipe.service'
-import { useQuery } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
-const MyRecipe = () => {
-  const { data: session } = useSession()
-
-  const { data } = useQuery({
-    queryKey: ['recipesByUser'],
-    queryFn: () => fetchRecipesByUser(session?.userId, session?.accessToken),
-  })
+const MyRecipe = async() => {
+  const data = await fetchRecipesByUser()
 
   return (
     <div>

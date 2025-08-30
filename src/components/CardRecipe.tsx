@@ -1,8 +1,9 @@
-
+// cardRecipe.tsx
 import { CardRecipeProps } from "@/app/page";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import Image from 'next/image'
+import { Button } from "@/components/ui/button";
 
 const CardRecipe = ({
   name,
@@ -11,6 +12,8 @@ const CardRecipe = ({
   difficulty,
   cookingDuration,
   user,
+  isAdmin,
+  isMyEmail
 }: CardRecipeProps) => (
   <Card className='w-[276px] h-[390px]'>
     <div>
@@ -29,11 +32,11 @@ const CardRecipe = ({
       <CardFooter>
         <div className='flex w-full item-center'>
           <div className='flex p-1 grow'>
-            <Image src='/icons/av_timer.svg' alt='av timer' width={24} height={24} />
+            <img src='/icons/av_timer.svg' alt='av timer' />
             <p>{difficulty.name}</p>
           </div>
           <div className='flex p-1 grow'>
-            <Image src='/icons/level.svg' alt='level' width={24} height={24} />
+            <img src='/icons/level.svg' alt='level' />
             <p>{cookingDuration.name}</p>
           </div>
         </div>
@@ -45,6 +48,8 @@ const CardRecipe = ({
         </div>
       </CardFooter>
     </div>
+    {isAdmin && <Button className="bg-red-700 text-white">Delete</Button>}
+    {isMyEmail && <Button className="bg-green-700 text-white">Edit</Button>}
   </Card>
 )
 
