@@ -1,4 +1,3 @@
-// laoding my recipe
 import SkeletonCardLoading from '@/components/SkeletonCardLoading'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'

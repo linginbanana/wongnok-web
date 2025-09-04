@@ -1,9 +1,14 @@
 //route.ts
-import NextAuth from 'next-auth'
+/*import NextAuth from 'next-auth'
 import KeyclockProvider from 'next-auth/providers/keycloak'
-import { decodeJwt } from 'jose'
+import { decodeJwt } from 'jose'*/
 
-const handler = NextAuth({
+import { config } from '@/lib/auth'
+import NextAuth from 'next-auth'
+
+const handler = NextAuth(config)
+
+/*const handler = NextAuth({
   providers: [
     KeyclockProvider({
       clientId: process.env.KEYCLOCK_CLIENT_ID ?? '',
@@ -35,5 +40,5 @@ const handler = NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET,
 })
-
+*/
 export { handler as GET, handler as POST }
