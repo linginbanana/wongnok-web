@@ -4,6 +4,18 @@ export const config = {
     matcher: ['/my-recipe']
 }
 
+import { NextResponse } from 'next/server';
+
+export function middleware(request: any) {
+  const isLoggedIn = true;
+  if (!isLoggedIn && request.nextUrl.pathname.startsWith('/create-recipe')) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+  return NextResponse.next();
+}
+
+
+
 /*//middleware.ts
 import withAuth from 'next-auth/middleware'
 

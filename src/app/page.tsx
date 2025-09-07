@@ -9,7 +9,7 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious
+  PaginationPrevious,
 } from '@/components/ui/pagination'
 import { fetchRecipes, Recipe } from '@/services/recipe.service'
 import { useMutation } from '@tanstack/react-query'
@@ -38,6 +38,10 @@ export type CardRecipeProps = {
     name: string
   }
   user: User
+  
+  isAdmin?: boolean
+  isMyEmail?: boolean
+
 }
 
 export default function Home() {
@@ -48,6 +52,7 @@ export default function Home() {
     results: [],
     total: 0,
   })
+
   const {
     mutateAsync: getRecipe,
     isPending: isRecipeLoading,
@@ -58,15 +63,18 @@ export default function Home() {
       console.log('error fetching')
     },
     onSuccess: (data) => {
-      setRecipesData(data)
+
+        if (data) {
+          setRecipesData(data)
+        }
+
     },
   })
+
   const limitDataPerPage = 5
   const pathname = usePathname()
-  
   const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams)
-  params.set('limit', String(limitDataPerPage))
+  const params = new URLSearchParams(searchParams.toString())
 
   const router = useRouter()
   const [currentPage, setCurrentPage] = useState<number>(
@@ -76,26 +84,29 @@ export default function Home() {
     searchParams.get('search') ?? ''
   )
 
-  useEffect(() => {
-    params.set('page', String(currentPage))
-    router.replace(`${pathname}?${params.toString()}`)
-    getRecipe({
-      page: Number(currentPage),
-      limit: limitDataPerPage,
-      search: searchInput,
-    })
-  }, [currentPage])
+    useEffect(() => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', String(currentPage))
+      router.replace(`${pathname}?${params.toString()}`)
 
-  const handleSearch = useDebouncedCallback((data) => {
+      getRecipe({
+        page: currentPage,
+        limit: limitDataPerPage,
+        search: searchInput,
+      })
+    }, [currentPage, pathname, router, searchInput, getRecipe, searchParams])
+
+
+  const handleSearch = useDebouncedCallback((data: string) => {
     params.set('page', '1')
-    if (searchInput === '') {
+    if (data === '') {
       params.delete('search')
     } else {
-      params.set('search', searchInput)
+      params.set('search', data)
     }
     router.replace(`${pathname}?${params.toString()}`)
     getRecipe({
-      page: Number(currentPage),
+      page: 1,
       limit: limitDataPerPage,
       search: data,
     })
@@ -112,17 +123,18 @@ export default function Home() {
           handleSearch(e.target.value)
         }}
       />
-      <h1 className='pt-6 pb-8 text-4xl font-bold'>สูตรอาหารทั้งหมด</h1>
+      <h1 className="pt-6 pb-8 text-4xl font-bold">สูตรอาหารทั้งหมด</h1>
+
       {isRecipeLoading ? (
         <div>
-          <div className='flex flex-wrap gap-8'>
+          <div className="flex flex-wrap gap-8">
             {[1, 2, 3, 4, 5, 6, 7].map((i) => {
               return <SkeletonCardLoading key={i} />
             })}
           </div>
         </div>
       ) : (
-        <div className='flex flex-wrap gap-8'>
+        <div className="flex flex-wrap gap-8">
           {recipesData &&
             recipesData.results.length > 0 &&
             recipesData.results.map((recipe) => {
@@ -134,6 +146,7 @@ export default function Home() {
             })}
         </div>
       )}
+
       <Pagination>
         <PaginationContent>
           <PaginationItem>
@@ -148,9 +161,6 @@ export default function Home() {
           <PaginationItem>
             <PaginationLink>{currentPage}</PaginationLink>
           </PaginationItem>
-          {/* <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem> */}
           <PaginationItem>
             <PaginationNext
               onClick={() => {
