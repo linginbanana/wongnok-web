@@ -15,10 +15,10 @@ import { useForm } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import { getUser, User } from '@/services/recipe.service'
 
-const MyProfile = () => {
+const Profile = () => {
 
   const { data, isLoading, isError } = useQuery<User>({
-    queryKey: ['recipeDetail'],
+    queryKey: ['recipe-detail'],
     queryFn: () => getUser(),
   })
   const form = useForm()
@@ -30,10 +30,10 @@ const MyProfile = () => {
     <div className=' flex flex-col'>
       <div className='flex justify-between items-center py-8'>
         <h1 className='font-bold text-4xl'>โปรไฟล์ของฉัน</h1>
-        <Link href={'/edit-myprofile'}>
+        <Link href={'/edit-profile'}>
           <Button className='border text-primary-500' variant='ghost'>
             <Image
-              src='icons/Edit.svg'
+              src='/icons/edit.svg'
               width={12}
               height={12}
               alt='edit logo'
@@ -45,7 +45,7 @@ const MyProfile = () => {
       <div className='flex-1 flex justify-center my-10'>
         <div className='flex flex-col justify-center items-center'>
           <div className='bg-slate-200 w-[152px] h-[152px] rounded-full'>
-            <Image src={`${data?.imageUrl}`} alt="logo profile" width={152} height={152}/>
+            <Image src={data.imageUrl} alt="logo profile" width={152} height={152}/>
           </div>
           <div className='my-5'>{data?.firstName} {data?.lastName}</div>
           <Form {...form}>
@@ -75,4 +75,4 @@ const MyProfile = () => {
   )
 }
 
-export default MyProfile
+export default Profile

@@ -20,9 +20,10 @@ import { useRouter } from 'next/navigation'
 const EditMyProfile = () => {
   const router = useRouter()
   const { data, isLoading, isError } = useQuery<User>({
-    queryKey: ['recipeDetail'],
+    queryKey: ['userProfile'],
     queryFn: () => getUser(),
   })
+
   const form = useForm<UserForm>({
     defaultValues: {
       nickName: '',
@@ -33,12 +34,13 @@ const EditMyProfile = () => {
   const { mutateAsync: UpdateProfile } = useMutation({
     mutationFn: UpdateUser,
     onError: () => {
-      console.log("error update")      
+      console.log("error update")
     },
     onSuccess: () => {
       router.replace('/')
     },
   })
+
   useEffect(() => {
     if (data) {
       form.reset({
@@ -47,26 +49,30 @@ const EditMyProfile = () => {
       })
     }
   }, [data, form])
-  if (isLoading || status === 'loading') return <div>Loading...</div>
+
+  if (isLoading) return <div>Loading...</div>
   if (isError) return <div>Error</div>
 
-  const onSubmit: SubmitHandler<UserForm> = (data) => {
-UpdateProfile(data)
+  const onSubmit: SubmitHandler<UserForm> = (formData) => {
+    UpdateProfile(formData)
   }
+
   return (
-    <div className=' flex flex-col'>
+    <div className='flex flex-col'>
       <div className='flex justify-between items-center py-8'>
         <h1 className='font-bold text-4xl'>แก้ไขโปรไฟล์ของฉัน</h1>
       </div>
       <div className='flex-1 flex justify-center my-10'>
         <div className='flex flex-col justify-center items-center'>
-          <div className='bg-slate-200 w-[152px] h-[152px] rounded-full'>
-            <Image
-              src={`${data?.imageUrl}`}
-              alt='logo profile'
-              width={152}
-              height={152}
-            />
+          <div className='bg-slate-200 w-[152px] h-[152px] rounded-full overflow-hidden'>
+            {data?.imageUrl && (
+              <Image
+                src={data.imageUrl}
+                alt='logo profile'
+                width={152}
+                height={152}
+              />
+            )}
           </div>
           <div className='my-5'>
             {data?.firstName} {data?.lastName}

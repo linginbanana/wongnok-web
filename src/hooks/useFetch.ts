@@ -1,4 +1,4 @@
-import { Recipe, fetchRecipes } from '../services/recipe.service'
+import { Recipe, fetchRecipes } from '@services/recipes.service'
 import { useState, useEffect } from 'react'
 
 export const useFetch = () => {

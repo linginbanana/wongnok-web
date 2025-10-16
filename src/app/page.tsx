@@ -9,20 +9,22 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious
+  PaginationPrevious,
 } from '@/components/ui/pagination'
 import { fetchRecipes, Recipe } from '@/services/recipe.service'
 import { useMutation } from '@tanstack/react-query'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
-import Image from 'next/image'
 
 type User = {
   id: string
   firstName: string
   lastName: string
+  imageUrl: string
+  nickName: string
 }
 
 export type CardRecipeProps = {
@@ -38,6 +40,17 @@ export type CardRecipeProps = {
     id: number
     name: string
   }
+  favorite:{
+    foodRecipeID : number
+    id : number  
+    UserID :string
+  }  
+  rating:{
+    foodRecipeID : number
+    score:number
+    id : number  
+    UserID :string
+  }  
   user: User
 }
 
@@ -58,13 +71,25 @@ export default function Home() {
     onError: () => {
       console.log('error fetching')
     },
-    onSuccess: (data) => {
+    onSuccess: (data) => {      
+       if (
+        Number(searchParams.get('page')) >
+        Math.ceil(data.total / Number(searchParams.get('limit')))
+      ) {
+        params.set('search', searchParams.get('search') ?? '')
+        params.set('page', '1')
+        router.replace(`${pathname}?${params.toString()}`)
+        setCurrentPage(1)
+        
+      }
       setRecipesData(data)
     },
   })
+
+  console.log(recipesData.results)
   const limitDataPerPage = 5
   const pathname = usePathname()
-  
+
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams)
   params.set('limit', String(limitDataPerPage))
@@ -102,10 +127,57 @@ export default function Home() {
     })
   }, 1000)
 
-  if (isRecipeError) return <h1>Error</h1>
+  if (isRecipeError)
+    return (
+      <>
+        <div>
+          <div className='w-full flex justify-center items-center my-8'>
+            <div className='flex w-[584px] h-[40px] relative'>
+              <div className='absolute mx-4 h-full flex justify-center items-center'>
+                <Image
+                  color='#E030F6'
+                  src='/icons/search.svg'
+                  alt='icon search'
+                  width={18}
+                  height={18}
+                />
+              </div>
+
+              <Input
+                className='rounded-3xl text-center'
+                value={searchInput}
+                onChange={(e) => {
+                  setSearchInput(e.target.value)
+                  handleSearch(e.target.value)
+                }}
+              />
+            </div>
+          </div>
+
+          <h1 className='pt-6 pb-8 text-4xl font-bold '>สูตรอาหารทั้งหมด</h1>
+          <div className='py-2 px-3 bg-pinklittle rounded-lg flex items-center'>
+            <div className='mx-2'>
+              <Image
+                src='/icons/errorclound.svg'
+                alt='error search'
+                width={18}
+                height={18}
+              />
+            </div>
+
+            <div>
+              ไม่สามารถดึงข้อมูลสูตรอาหารได้ กรุณา “รีเฟรช”
+              หน้าจอเพื่อลองใหม่อีกครั้ง
+            </div>
+          </div>
+        </div>
+      </>
+    )
 
   return (
     <div>
+      <div className='w-full flex justify-center items-center my-8'>
+        <div className='flex w-[584px] h-[40px] relative'>
           <div className='absolute mx-4 h-full flex justify-center items-center'>
             <Image
               color='#E030F6'
@@ -114,32 +186,35 @@ export default function Home() {
               width={18}
               height={18}
             />
-          </div>      
-      <Input
-        className='rounded-3xl text-center'
-        value={searchInput}
-        onChange={(e) => {
-          setSearchInput(e.target.value)
-          handleSearch(e.target.value)
-        }}
-      />
+          </div>
+
+          <Input
+            className='rounded-3xl text-center'
+            value={searchInput}
+            onChange={(e) => {
+              setSearchInput(e.target.value)
+              handleSearch(e.target.value)
+            }}
+          />
+        </div>
+      </div>
       <h1 className='pt-6 pb-8 text-4xl font-bold'>สูตรอาหารทั้งหมด</h1>
       {isRecipeLoading ? (
         <div>
-          <div className='flex flex-wrap gap-8'>
-            {[1, 2, 3, 4, 5, 6, 7].map((i) => {
+          <div className='flex flex-wrap gap-8 '>
+            {[1, 2, 3, 4].map((i) => {
               return <SkeletonCardLoading key={i} />
             })}
           </div>
         </div>
       ) : (
-        <div className='flex flex-wrap gap-8'>
+        <div className='flex flex-wrap gap-8 '>
           {recipesData &&
             recipesData.results.length > 0 &&
             recipesData.results.map((recipe) => {
               return (
                 <Link key={recipe.id} href={`recipe-details/${recipe.id}`}>
-                  <CardRecipe key={recipe.id} {...recipe} />
+                  <CardRecipe key={recipe?.id} {...recipe} />
                 </Link>
               )
             })}
@@ -148,7 +223,7 @@ export default function Home() {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious
+            <PaginationPrevious className='cursor-pointer'
               onClick={() => {
                 setCurrentPage((prev) => {
                   return prev <= 1 ? prev : prev - 1
@@ -163,7 +238,7 @@ export default function Home() {
             <PaginationEllipsis />
           </PaginationItem> */}
           <PaginationItem>
-            <PaginationNext
+            <PaginationNext className='cursor-pointer'
               onClick={() => {
                 setCurrentPage((prev) => {
                   return prev >= Math.ceil(recipesData.total / limitDataPerPage)
