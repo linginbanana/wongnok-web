@@ -43,7 +43,7 @@ const RecipeDetailsId = async ({ params }: RecipeDetailsIdProps) => {
         </div>
         <div>
           <h1 className='text-3xl font-bold'>วัตถุดิบ</h1>
-          <p>เนื้อสันใน 300 กรับ</p>
+          <p>เนื้อสันใน 400 กรับ</p>
         </div>
       </div>
     </div>

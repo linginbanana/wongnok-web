@@ -1,7 +1,10 @@
+'use client'
 import Image from 'next/image'
 import { Button } from './ui/button'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 const Navbar = () => {
+  const {data: session} = useSession()
   return (
     <div className='flex justify-between'>
       <Image
@@ -10,7 +13,16 @@ const Navbar = () => {
         height={49}
         alt='wongnok-logo'
       />
-      <Button className='text-primary-a' variant='ghost'>
+      {session ? (
+        <div className='flex items-center gap-4'>
+          สวัสดีคุณ {session.user?.name}
+          <Button onClick={() => signOut()}>signOut</Button>
+        </div>
+      ) : (
+        <Button className='text-primary-a' 
+           variant='ghost' 
+           onClick={() => signIn('keycloak')}
+        >
         <Image
           color='red'
           src='/icons/person.svg'
@@ -18,9 +30,9 @@ const Navbar = () => {
           width={24}
           height={24}
         />
-        เข้าระบบ
+        Login
       </Button>
-    </div>
+      )}</div>
   )
 }
 

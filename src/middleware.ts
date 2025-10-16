@@ -1,10 +1,22 @@
-export { default } from 'next-auth/middleware'
-
+//โค้ตที่เพิ่มเติม
 export const config = {
-    matcher: ['/my-recipe']
+  matcher: [
+    '/my-recipe',
+    '/create-recipe',
+    '/profile',
+    '/favorites',
+    //'/recipe-detail',
+  ],
 }
 
-import { NextResponse } from 'next/server';
+
+export { default } from 'next-auth/middleware'
+
+/*export const config = {
+    matcher: ['/my-recipe']
+}
+*/
+/*import { NextResponse } from 'next/server';
 
 export function middleware(request: any) {
   const isLoggedIn = true;
@@ -14,10 +26,8 @@ export function middleware(request: any) {
   return NextResponse.next();
 }
 
-
-
-/*//middleware.ts
-import withAuth from 'next-auth/middleware'
+//middleware.ts
+//import withAuth from 'next-auth/middleware'
 
 export default withAuth({
   callbacks: {
@@ -27,8 +37,8 @@ export default withAuth({
       return isAdminRecipe
     },
   },
-})
+})*/
 
-export const config = {
+/*export const config = {
   matcher: ['/'], // '/my-recipe'
 }*/

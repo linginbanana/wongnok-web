@@ -26,7 +26,7 @@ export default function RootLayout({
         <main>
           <Provider>
             <Navbar />
-            {children}
+            <div className='flex-1 flex flex-col'>{children}</div>
           </Provider>
         </main>
         <footer></footer>

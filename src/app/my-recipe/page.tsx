@@ -1,3 +1,4 @@
+
 import CardRecipe from '@/components/CardRecipe'
 import { Button } from '@/components/ui/button'
 import { fetchRecipesByUser } from '@/services/recipe.service'

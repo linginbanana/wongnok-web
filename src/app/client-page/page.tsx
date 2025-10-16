@@ -1,9 +1,11 @@
 'use client'
 
 import CardRecipe from '@/components/CardRecipe'
-import { fetchRecipes } from '@/services/recipe.service'
+import { fetchRecipes, Recipe } from '@/services/recipe.service'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+
+
 
 const ClientPage = () => {
   const [recipesData, setRecipesData] = useState<any>()
@@ -17,7 +19,7 @@ const ClientPage = () => {
     <div className='flex flex-wrap gap-8'>
       {recipesData &&
         recipesData.results.length > 0 &&
-        recipesData.results.map((recipe) => {
+        recipesData.results.map((recipe: Recipe) => {
           return (
             <Link key={recipe.id} href={`recipe-details/${recipe.id}`}>
               <CardRecipe key={recipe.id} {...recipe} />
